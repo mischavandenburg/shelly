@@ -4,7 +4,6 @@ CREATE TABLE shelly_sensor_data (
     temperature NUMERIC(5,2),
     humidity NUMERIC(5,2),
     battery INTEGER,
-    ext_power BOOLEAN,
     error INTEGER,
 );
 -- Create an index on the device_id for faster queries
