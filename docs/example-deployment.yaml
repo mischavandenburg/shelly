@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shelly-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shelly-api
+  template:
+    metadata:
+      labels:
+        app: shelly-api
+        policy-type: "app"
+    spec:
+      # Set security context for the pod
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: shelly-api
+          image: ghcr.io/mischavandenburg/shelly:v0.1.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            # Ensure the container runs as user 1000
+            runAsUser: 1000
+            runAsGroup: 1000
+            # Drop all capabilities for better security
+            capabilities:
+              drop:
+                - ALL
+            # Ensure the container is non-root
+            runAsNonRoot: true
+
+          envFrom:
+            - configMapRef:
+                name: shelly-configmap
+            - secretRef:
+                name: shelly-container-env
+
+      restartPolicy: Always
